@@ -1,0 +1,30 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+  # You may wish to disable always updating cookbooks in CI or other testing environments.
+  # For example:
+  #   always_update_cookbooks: <%= !ENV['CI'] %>
+  #always_update_cookbooks: true
+  product_name: chef
+  product_version: 12.19.36
+verifier:
+  name: inspec
+
+platforms:
+#  - name: ubuntu-16.04
+  - name: centos-7.3
+
+suites:
+  - name: default
+    run_list:
+      - recipe[linux_hardening::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+#         linux_hardening:
+#             cron_dirs: %w(cron.hourly  cron.daily cron.weekly cron.monthly cron.d)
+#            cron_files: %w(crontab)
