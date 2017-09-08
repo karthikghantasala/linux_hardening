@@ -48,3 +48,23 @@ node['linux_hardening']['etc_files2'].each do |etc_file2|
 	mode '0000'
   end
   end
+
+#execute 'Ensure root is the only UID 0 account' do
+##  command "id root |cut -d'(' -f1 |cut -d'=' -f2"
+#  live_stream true
+#end
+
+ruby_block "something" do
+    block do
+        #tricky way to load this Chef::Mixin::ShellOut utilities
+        Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)      
+        command = "id root |cut -d'(' -f1 |cut -d'=' -f1"
+        command_out = shell_out(command)
+        node.normal['my_attribute'] = command_out.stdout
+    end
+    action :create
+end
+
+log "Welcome to Chef, #{node['my_attribute']}!" do
+  level :info
+end
