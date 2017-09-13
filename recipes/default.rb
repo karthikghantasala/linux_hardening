@@ -66,6 +66,45 @@ bash "#{xinetd_service}" do
   end   
 end
 
+bash "legacy_check" do
+#  cwd '/etc/xinetd.d'
+  code <<-EOH
+   grep '^+:' "/etc/passwd" 
+    if [ "$?" -eq "0" ] ; then
+	  sudo userdel '+'
+        
+	fi
+	EOH
+end 
+
+
+#ruby_block "legacy_check" do
+#    block do
+#        Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)      
+#        live_stream true
+#		command1 = " if [ grep '^+:' /etc/passwd"
+#        commandout1 = shell_out(command1)
+#        if commandout1 != nil 
+#          command2 = "sudo userdel '+'"
+#           command2 = "sudo rm -f /etc/test.txt"
+#        end
+ #       node.normal['my_attribute'] = commandout.stdout
+#        :action, 'resource[name]', :timer
+##	end
+ #   action :run
+#end
+
+
+
+#user 'user with uid zero' do
+#  comment 'A user with 0 uid'
+#  uid '0'
+#  action: delete
+#  not_if { ::Process.uid.zero? }
+#   not_if ()
+#end 
+
+
 #execute 'Ensure root is the only UID 0 account' do
 ##  command "id root |cut -d'(' -f1 |cut -d'=' -f2"
 #  live_stream true
