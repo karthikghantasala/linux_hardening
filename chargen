@@ -1,0 +1,18 @@
+
+
+service chargen
+{
+# This is for quick on or off of the service
+        disable         = yes
+
+# The next attributes are mandatory for all services
+        id              = chargen-stream
+        type            = INTERNAL
+        wait            = no
+        socket_type     = stream
+#       protocol        =  socket type is usually enough
+
+# External services must fill out the following
+#       user            =
+#       group           =
+#       server          =

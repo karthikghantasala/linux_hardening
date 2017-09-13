@@ -49,22 +49,67 @@ node['linux_hardening']['etc_files2'].each do |etc_file2|
   end
   end
 
+#node['linux_hardening']['xined_services'].each do |xinetd_service|
+##  execute "#{xinetd_service}" do
+#  command 'sed -e \"6s/yes/no/\"'
+#end
+#end  
+
+node['linux_hardening']['xinetd_services'].each do |xinetd_service|
+bash "#{xinetd_service}" do
+  cwd '/etc/xinetd.d'
+  code <<-EOH
+    sed -e '6s/yes/no/' "#{xinetd_service}" 
+    EOH
+  only_if { ::File.exist?("/etc/xinetd.d/#{xinetd_service}") } 
+#   only_if { 'if -f [#{xinetd_service}]', :cwd => '/etc/xinetd.d/' }
+  end   
+end
+
 #execute 'Ensure root is the only UID 0 account' do
 ##  command "id root |cut -d'(' -f1 |cut -d'=' -f2"
 #  live_stream true
 #end
 
-ruby_block "something" do
-    block do
-        #tricky way to load this Chef::Mixin::ShellOut utilities
-        Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)      
-        command = "id root |cut -d'(' -f1 |cut -d'=' -f1"
-        command_out = shell_out(command)
-        node.normal['my_attribute'] = command_out.stdout
-    end
-    action :create
-end
+#ruby_block "something" do
+#    block do
+#        #tricky way to load this Chef::Mixin::ShellOut utilities
+#        Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)      
+#        command = "id root |cut -d'(' -f1 | cut -d'=' -f1"
+#        cmd.live_stdout = $stdout
+#        cmd.run_command
+#        command = "id -u root"
+#        commandout = shell_out(command)
+#		commandout = commandout.to_i
+#		command_out = Integer(command_out)
+#       node.normal['my_attribute'] = command_out.stdout
+#		node.normal['my_attribute'] = commandout
+#    end
+#    action :create
+#end
 
-log "Welcome to Chef, #{node['my_attribute']}!" do
-  level :info
-end
+#log "Welcome to Chef, #{node['my_attribute']}!" do
+#  level :info
+#end
+
+#http://stackoverflow.com/questions/1274605/ruby-search-file-text-for-a-pattern-and-replace-it-with-a-given-value 
+#file_names = ['foo.txt', 'bar.txt']
+#file_names.each do |file_name|
+#  text = File.read(file_name)
+#  new_contents = text.gsub(/search_regexp/, "replacement string")
+  # To merely print the contents of the file, use:
+#  puts new_contents
+  # To write changes to the file, use:
+#  File.open(file_name, "w") {|file| file.puts new_contents }
+#end
+
+
+#LG=$(grep '^+:' /etc/passwd) #if they're in passwd, they're a user
+#if [$? -eq 0]; then 
+#    #We've found a user
+#    echo "We've found the user '+'!"
+#    sudo userdel '+'
+#    echo "Deleted."
+#else
+#    echo "Couldn't find the user '+'."
+#fi
